@@ -1297,7 +1297,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: github.com
-  namespace: argo
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
@@ -1334,7 +1334,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: argo
-  namespace: argo
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
@@ -1347,7 +1347,7 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: argo-server
-  namespace: argo
+  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 data:
@@ -1955,18 +1955,17 @@ rules:
   verbs:
   - get
 ---
----
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: github.com
+  name: kubelet-executor-default
 roleRef:
   apiGroup: rbac.authorization.k8s.io
-  kind: Role
-  name: submit-workflow-template
+  kind: ClusterRole
+  name: kubelet-executor
 subjects:
 - kind: ServiceAccount
-  name: github.com
+  name: default
   namespace: {{ .Release.Namespace }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
@@ -1980,45 +1979,6 @@ roleRef:
 subjects:
 - kind: ServiceAccount
   name: default
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: argo-clusterworkflowtemplate-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-clusterworkflowtemplate-role
-subjects:
-- kind: ServiceAccount
-  name: argo
-  namespace: {{ .Release.Namespace }}
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: argo-server-clusterworkflowtemplate-role-binding
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: argo-server-clusterworkflowtemplate-role
-subjects:
-- kind: ServiceAccount
-  name: argo-server
-  namespace: {{ .Release.Namespace }}
----
-apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
-metadata:
-  name: kubelet-executor-default
-roleRef:
-  apiGroup: rbac.authorization.k8s.io
-  kind: ClusterRole
-  name: kubelet-executor
-subjects:
-- kind: ServiceAccount
-  name: default
-  namespace: {{ .Release.Namespace }}
 ---
 apiVersion: v1
 kind: Service
